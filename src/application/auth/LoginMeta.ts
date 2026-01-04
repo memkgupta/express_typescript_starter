@@ -1,6 +1,6 @@
 // application/auth/LoginMeta.ts
 export interface LoginMeta {
-    deviceId?: string;
-    userAgent?: string;
-    ipAddress?: string;
+    deviceId?: string | string[] | undefined;
+    userAgent?: string |undefined;
+    ipAddress?: string |undefined;
 }
