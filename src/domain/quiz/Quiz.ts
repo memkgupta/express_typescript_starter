@@ -6,9 +6,8 @@ export class Quiz {
   constructor( public readonly id: string ,
     private readonly title: string,
     private readonly host: Host,
-  
-   
     private readonly config: QuizConfig,
+    private readonly code:string,
        private readonly createdAt: Date = new Date(),
     private currentQuestion: Question | null = null
   ) {}
@@ -44,5 +43,8 @@ export class Quiz {
 
   getCreatedAt(): Date {
     return this.createdAt;
+  }
+  getCode():string{
+    return this.code;
   }
 }

@@ -10,18 +10,25 @@ import type { HostService } from "./HostService.js";
 import { Host } from "@/domain/quiz/Host.js";
 import { QuizConfig } from "@/domain/quiz/QuizConfig.js";
 import { QuizConfigFactory } from "@/domain/quiz/QuizConfigFactory.js";
+import type { EventSender } from "@/domain/interfaces/events/EventSender.js";
+import { Event } from "@/domain/interfaces/events/Event.js";
+import { EventEnum } from "@/domain/interfaces/events/EventEnum.js";
 
 
 export class QuizService {
-  constructor(private readonly quizRepo: QuizRepository,private readonly hostService:HostService) {}
+  constructor(private readonly quizRepo: QuizRepository,private readonly hostService:HostService ,
+    private readonly eventSender:EventSender
+  ) {}
 
   async createQuiz(user:User , title:string):Promise<Quiz>{
      const quiz = QuizFactory.createNew(title,
        await this.hostService.createHost(new Host(
         crypto.randomUUID(),
         user.name,
-        user
+        user,
     ))
+,
+crypto.randomUUID().toString() // todo replace with the service method for creating globally unique joining code
 ,
     QuizConfigFactory.createNew()
 );
@@ -41,7 +48,9 @@ return quiz;
     
 
     quiz.start(firstQuestion);
+
     await this.quizRepo.save(quiz);
+    await this.eventSender.send(new Event<string>("",EventEnum.QUIZ_START,"")) // todo upate with correct event
   }
 
   async setNextQuestion(
@@ -54,6 +63,7 @@ return quiz;
    
     quiz.setNextQuestion(question);
     await this.quizRepo.save(quiz);
+    await this.eventSender.send(new Event<string>("",EventEnum.NEW_QUESTION,"")) // todo upate with correct event
   }
 
   /* ---------- PARTICIPANT ACTIONS ---------- */

@@ -1,4 +1,5 @@
 import type { User } from "../user/User.js";
+import type { Quiz } from "./Quiz.js";
 
 export class Participant {
   private score: number = 0;
@@ -6,6 +7,7 @@ export class Participant {
 
   constructor(
     public readonly id: string,
+    private readonly quiz:Quiz,
     public readonly name: string,
     public readonly user: User
   ) {}
